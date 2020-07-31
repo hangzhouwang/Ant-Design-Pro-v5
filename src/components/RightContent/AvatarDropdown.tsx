@@ -8,7 +8,7 @@ import {
 import { Avatar, Menu, Spin, Modal } from 'antd';
 import { history, useModel } from 'umi';
 import { getPageQuery, removeAuth } from '@/utils/utils';
-import { outLogin } from '@/services/login';
+import { logout } from '@/services/login';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
@@ -21,7 +21,7 @@ export interface GlobalHeaderRightProps {
  * 退出登录，并且将当前的 url 保存
  */
 const loginOut = async () => {
-  await outLogin();
+  await logout();
   const { redirect } = getPageQuery();
 
   // 删除token

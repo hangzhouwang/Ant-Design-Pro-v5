@@ -45,13 +45,12 @@ export default defineConfig({
     {
       path: '/admin',
       name: 'admin',
-      icon: 'crown',
+      icon: 'team',
       access: 'canAdmin',
       routes: [
         {
           path: '/admin/index',
           name: 'index',
-          icon: 'smile',
           component: './Admin/Index/index',
         },
         {

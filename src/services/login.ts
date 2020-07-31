@@ -6,7 +6,7 @@ export interface LoginParamsType {
   password?: string;
   phone?: string;
   captcha?: string;
-  type?: 'account' | 'phone' | 'weixin' | 'dingding';
+  type?: string;
 }
 
 //  登录
@@ -21,10 +21,6 @@ export async function getSystemInfo() {
   return request<API.SystemInfoType>('/system/info');
 }
 
-export async function getFakeCaptcha(mobile: string) {
-  return request(`/api/login/captcha?mobile=${mobile}`);
-}
-
-export async function outLogin() {
+export async function logout() {
   return request('/logout');
 }

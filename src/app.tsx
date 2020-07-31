@@ -100,6 +100,8 @@ export const layout = ({
     menuHeaderRender: undefined,
     // 禁用移动端
     disableMobile: false,
+    // 菜单https://procomponents.ant.design/layout/menu
+    // menuDataRender:()=> menuData
     ...initialState?.settings,
   };
 };
