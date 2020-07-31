@@ -1,12 +1,13 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { notification } from 'antd';
-import { history, RequestConfig } from 'umi';
+import { history, RequestConfig, useIntl, Link } from 'umi';
 import RightContent from '@/components/RightContent';
-import Footer from '@/components/Footer';
+import Footer from '@/components/Footer/index';
 import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
+import logo from './assets/logo.png';
 
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
@@ -32,7 +33,7 @@ export async function getInitialState(): Promise<{
 export const layout = ({
   initialState,
 }: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
+  initialState: { settings?: LayoutSettings };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
@@ -44,7 +45,32 @@ export const layout = ({
         history.push('/user/login');
       }
     },
+    logo: () => {
+      return <img src={logo} alt="" />;
+    },
+    // 添加首页
+    breadcrumbRender: (routers = []) => [
+      {
+        path: '/',
+        breadcrumbName: useIntl().formatMessage({
+          id: 'menu.home',
+        }),
+      },
+      ...routers,
+    ],
+    // 过滤掉一级导航菜单
+    itemRender: (route, params, routes, paths) => {
+      const first = routes.indexOf(route) === 0;
+      return first ? (
+        <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
+      ) : (
+        <span>{route.breadcrumbName}</span>
+      );
+    },
     menuHeaderRender: undefined,
+    // 禁用移动端
+    disableMobile: false,
+    // menuDataRender: MenuRender,
     ...initialState?.settings,
   };
 };

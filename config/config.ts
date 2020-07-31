@@ -46,20 +46,22 @@ export default defineConfig({
       path: '/welcome',
       name: 'welcome',
       icon: 'smile',
-      component: './Welcome',
+      component: './DashBoard/index',
     },
     {
       path: '/admin',
       name: 'admin',
       icon: 'crown',
       access: 'canAdmin',
-      component: './Admin',
       routes: [
         {
-          path: '/admin/sub-page',
-          name: 'sub-page',
+          path: '/admin/index',
+          name: 'index',
           icon: 'smile',
-          component: './Welcome',
+          component: './Admin/Index/index',
+        },
+        {
+          component: './Error/404',
         },
       ],
     },
@@ -74,7 +76,7 @@ export default defineConfig({
       redirect: '/welcome',
     },
     {
-      component: './404',
+      component: './Error/404',
     },
   ],
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
