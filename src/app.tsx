@@ -9,24 +9,25 @@ import { queryCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 import logo from './assets/logo.png';
 
+// 初始化全局数据 比如从后台获取系统名称，当前用户信息
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   settings?: LayoutSettings;
 }> {
   // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  if (history.location.pathname !== '/login') {
     try {
       const currentUser = await queryCurrent();
       return {
         currentUser,
-        settings: defaultSettings,
+        settings: { ...defaultSettings, title: '杭州网' },
       };
     } catch (error) {
-      history.push('/user/login');
+      history.push('/login');
     }
   }
   return {
-    settings: defaultSettings,
+    settings: { ...defaultSettings, title: '杭州网' },
   };
 }
 
@@ -40,9 +41,9 @@ export const layout = ({
     disableContentMargin: false,
     footerRender: () => <Footer />,
     onPageChange: () => {
-      // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser?.userid && history.location.pathname !== '/user/login') {
-        history.push('/user/login');
+      // 判断有没有登录，没有登录，重定向到 login
+      if (!initialState?.currentUser?.userid && history.location.pathname !== '/login') {
+        history.push('/login');
       }
     },
     logo: () => {
@@ -120,4 +121,7 @@ const errorHandler = (error: ResponseError) => {
 
 export const request: RequestConfig = {
   errorHandler,
+  credentials: 'include', // 默认请求是否带上cookie
+  prefix: '/api/v1',
+  timeout: 1000, // 超时
 };

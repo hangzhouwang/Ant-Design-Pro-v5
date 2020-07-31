@@ -1,0 +1,51 @@
+@import '~antd/es/style/themes/default.less';
+
+.ant-pro-basicLayout-content {
+  margin: 0px;
+  canvas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.content {
+  flex: 1;
+  padding: 32px 0;
+}
+
+@media (min-width: @screen-md-min) {
+  .content {
+    padding: 32px 0 24px;
+  }
+}
+
+.loginContainer {
+  width: 380px;
+  padding: 20px 40px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+
+  h2 {
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}

@@ -43,6 +43,11 @@ export default defineConfig({
       ],
     },
     {
+      path: '/login',
+      layout: false,
+      component: './Login/index',
+    },
+    {
       path: '/welcome',
       name: 'welcome',
       icon: 'smile',

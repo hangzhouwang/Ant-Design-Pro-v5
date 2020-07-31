@@ -1,15 +1,17 @@
 import { request } from 'umi';
 
+// 登录参数
 export interface LoginParamsType {
-  username: string;
-  password: string;
-  mobile: string;
-  captcha: string;
-  type: string;
+  username?: string;
+  password?: string;
+  phone?: string;
+  captcha?: string;
+  type?: 'account' | 'phone' | 'weixin' | 'dingding';
 }
 
+//  登录
 export async function fakeAccountLogin(params: LoginParamsType) {
-  return request<API.LoginStateType>('/api/login/account', {
+  return request<API.LoginStateType>('/login/account', {
     method: 'POST',
     data: params,
   });
