@@ -1,12 +1,18 @@
 import React, { useCallback } from 'react';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Menu, Spin } from 'antd';
+import {
+  LogoutOutlined,
+  SettingOutlined,
+  UserOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
+import { Avatar, Menu, Spin, Modal } from 'antd';
 import { history, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import { outLogin } from '@/services/login';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import LocalStore from '../../utils/store';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -18,10 +24,13 @@ export interface GlobalHeaderRightProps {
 const loginOut = async () => {
   await outLogin();
   const { redirect } = getPageQuery();
-  // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
+
+  // 删除token
+  LocalStore.remove('token');
+
+  if (window.location.pathname !== '/login' && !redirect) {
     history.replace({
-      pathname: '/user/login',
+      pathname: '/login',
       search: stringify({
         redirect: window.location.href,
       }),
@@ -41,8 +50,17 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     }) => {
       const { key } = event;
       if (key === 'logout') {
-        setInitialState({ ...initialState, currentUser: undefined });
-        loginOut();
+        Modal.confirm({
+          title: '请确认',
+          icon: <ExclamationCircleOutlined />,
+          content: '您确认要退出系统吗?',
+          okText: '确认',
+          cancelText: '取消',
+          onOk: () => {
+            setInitialState({ ...initialState, currentUser: undefined });
+            loginOut();
+          },
+        });
         return;
       }
       history.push(`/account/${key}`);

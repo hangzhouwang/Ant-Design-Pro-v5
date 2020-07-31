@@ -1,8 +1,24 @@
 declare namespace API {
-  export interface LoginStateType {
-    status?: 'ok' | 'error';
-    type?: string;
+  interface ApiResponse {
+    status: 'ok' | 'error';
     message?: string;
+    data?: any[];
+  }
+
+  export interface LoginStateType extends ApiResponse {
+    data: {
+      type?: string;
+      message?: string;
+      authority?: 'guest' | 'admin';
+      token?: string;
+    };
+  }
+
+  export interface SystemInfoType extends ApiResponse {
+    data: {
+      site_name: string;
+      site_title: string;
+    };
   }
 
   export interface CurrentUser {
@@ -15,8 +31,8 @@ declare namespace API {
       key: string;
       label: string;
     }[];
-    userid?: string;
-    access?: 'user' | 'guest' | 'admin';
+    id?: string;
+    access?: 'guest' | 'admin';
     unreadCount?: number;
   }
 

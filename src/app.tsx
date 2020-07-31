@@ -8,6 +8,8 @@ import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 import logo from './assets/logo.png';
+import LocalStore from './utils/store';
+import { getSystemInfo } from './services/login';
 
 // 初始化全局数据 比如从后台获取系统名称，当前用户信息
 export async function getInitialState(): Promise<{
@@ -17,32 +19,51 @@ export async function getInitialState(): Promise<{
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/login') {
     try {
+      // 返回当前登录用户的信息 和 菜单权限
       const currentUser = await queryCurrent();
       return {
         currentUser,
-        settings: { ...defaultSettings, title: '杭州网' },
+        settings: { ...defaultSettings },
       };
     } catch (error) {
       history.push('/login');
     }
   }
+
+  let appName = LocalStore.getToJson('app');
+  if (!appName) {
+    try {
+      const result = await getSystemInfo();
+      if (result.status === 'ok') {
+        LocalStore.set('app', result.data);
+        appName = result.data;
+      }
+    } catch (error) {
+      notification.error({
+        message: `请求错误`,
+        description: `getSystemInfo方法请求错误，请联系管理员`,
+      });
+    }
+  }
+
   return {
-    settings: { ...defaultSettings, title: '杭州网' },
+    settings: { ...defaultSettings, title: appName.site_name },
   };
 }
 
 export const layout = ({
   initialState,
 }: {
-  initialState: { settings?: LayoutSettings };
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     footerRender: () => <Footer />,
     onPageChange: () => {
-      // 判断有没有登录，没有登录，重定向到 login
-      if (!initialState?.currentUser?.userid && history.location.pathname !== '/login') {
+      // 判断有没有登录，没有登录，销毁token 重定向到 login
+      if (!initialState?.currentUser?.id && history.location.pathname !== '/login') {
+        LocalStore.remove('token');
         history.push('/login');
       }
     },
@@ -71,7 +92,6 @@ export const layout = ({
     menuHeaderRender: undefined,
     // 禁用移动端
     disableMobile: false,
-    // menuDataRender: MenuRender,
     ...initialState?.settings,
   };
 };
@@ -118,10 +138,14 @@ const errorHandler = (error: ResponseError) => {
   }
   throw error;
 };
+const token = LocalStore.get('token');
 
 export const request: RequestConfig = {
   errorHandler,
   credentials: 'include', // 默认请求是否带上cookie
   prefix: '/api/v1',
   timeout: 1000, // 超时
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
 };

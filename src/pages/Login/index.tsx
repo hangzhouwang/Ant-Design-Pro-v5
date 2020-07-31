@@ -5,6 +5,7 @@ import { useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import ParticlesBg from 'particles-bg';
 import { LoginParamsType, fakeAccountLogin } from '@/services/login';
+import LocalStore from '@/utils/store';
 
 import LoginForm from './components/LoginForm';
 import './index.less';
@@ -45,13 +46,14 @@ const Login: React.FC<{}> = () => {
       const response = await fakeAccountLogin({ ...values, type: 'account' });
       if (response.status === 'ok') {
         message.success('登录成功！');
+        // 记录token
+        LocalStore.set('token', response.data.token);
         replaceGoto();
         setTimeout(() => {
           refresh();
-        }, 0);
+        }, 500);
         return;
       }
-      // 如果失败去设置用户错误信息
       message.error(response.message);
     } catch (error) {
       message.error('登录失败，请重试！');
