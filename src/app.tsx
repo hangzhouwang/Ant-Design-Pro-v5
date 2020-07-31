@@ -10,26 +10,13 @@ import defaultSettings from '../config/defaultSettings';
 import logo from './assets/logo.png';
 import LocalStore from './utils/store';
 import { getSystemInfo } from './services/login';
+import { removeAuth } from './utils/utils';
 
 // 初始化全局数据 比如从后台获取系统名称，当前用户信息
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   settings?: LayoutSettings;
 }> {
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/login') {
-    try {
-      // 返回当前登录用户的信息 和 菜单权限
-      const currentUser = await queryCurrent();
-      return {
-        currentUser,
-        settings: { ...defaultSettings },
-      };
-    } catch (error) {
-      history.push('/login');
-    }
-  }
-
   let appName = LocalStore.getToJson('app');
   if (!appName) {
     try {
@@ -46,8 +33,28 @@ export async function getInitialState(): Promise<{
     }
   }
 
+  const settings = { ...defaultSettings, title: appName.site_name };
+
+  // 如果不是登录页面，获取用户信息
+  if (history.location.pathname !== '/login') {
+    try {
+      // 返回当前登录用户的信息 和 菜单权限
+      const resp = await queryCurrent();
+      let currentUser;
+      if (resp.status === 'ok') {
+        currentUser = resp.data;
+      }
+
+      return {
+        currentUser,
+        settings,
+      };
+    } catch (error) {
+      history.push('/login');
+    }
+  }
   return {
-    settings: { ...defaultSettings, title: appName.site_name },
+    settings,
   };
 }
 
@@ -63,10 +70,11 @@ export const layout = ({
     onPageChange: () => {
       // 判断有没有登录，没有登录，销毁token 重定向到 login
       if (!initialState?.currentUser?.id && history.location.pathname !== '/login') {
-        LocalStore.remove('token');
+        removeAuth();
         history.push('/login');
       }
     },
+
     logo: () => {
       return <img src={logo} alt="" />;
     },
@@ -123,6 +131,8 @@ const errorHandler = (error: ResponseError) => {
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
+
+    console.log('status:', status);
 
     notification.error({
       message: `请求错误 ${status}: ${url}`,

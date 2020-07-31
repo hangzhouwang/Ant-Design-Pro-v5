@@ -2,7 +2,7 @@ declare namespace API {
   interface ApiResponse {
     status: 'ok' | 'error';
     message?: string;
-    data?: any[];
+    data?: any;
   }
 
   export interface LoginStateType extends ApiResponse {
@@ -34,6 +34,10 @@ declare namespace API {
     id?: string;
     access?: 'guest' | 'admin';
     unreadCount?: number;
+  }
+
+  export interface CurrentUserType extends ApiResponse {
+    data: CurrentUser;
   }
 
   export interface NoticeIconData {

@@ -1,5 +1,5 @@
-import { Tooltip, Tag, Space } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Space } from 'antd';
+
 import React from 'react';
 import { useModel, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
@@ -7,12 +7,6 @@ import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
-
-const ENVTagColor = {
-  dev: 'orange',
-  test: 'green',
-  pre: '#87d068',
-};
 
 const GlobalHeaderRight: React.FC<{}> = () => {
   const { initialState } = useModel('@@initialState');
@@ -52,22 +46,9 @@ const GlobalHeaderRight: React.FC<{}> = () => {
         //   //console.log('input', value);
         // }}
       />
-      <Tooltip title="使用文档">
-        <span
-          className={styles.action}
-          onClick={() => {
-            window.location.href = 'https://pro.ant.design/docs/getting-started';
-          }}
-        >
-          <QuestionCircleOutlined />
-        </span>
-      </Tooltip>
-      <Avatar />
-      {REACT_APP_ENV && (
-        <span>
-          <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
-        </span>
-      )}
+
+      <Avatar menu />
+
       <SelectLang className={styles.action} />
     </Space>
   );

@@ -7,12 +7,11 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Menu, Spin, Modal } from 'antd';
 import { history, useModel } from 'umi';
-import { getPageQuery } from '@/utils/utils';
+import { getPageQuery, removeAuth } from '@/utils/utils';
 import { outLogin } from '@/services/login';
 import { stringify } from 'querystring';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
-import LocalStore from '../../utils/store';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -26,7 +25,7 @@ const loginOut = async () => {
   const { redirect } = getPageQuery();
 
   // 删除token
-  LocalStore.remove('token');
+  removeAuth();
 
   if (window.location.pathname !== '/login' && !redirect) {
     history.replace({

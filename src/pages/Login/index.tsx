@@ -48,8 +48,8 @@ const Login: React.FC<{}> = () => {
         message.success('登录成功！');
         // 记录token
         LocalStore.set('token', response.data.token);
-        replaceGoto();
         setTimeout(() => {
+          replaceGoto();
           refresh();
         }, 500);
         return;
